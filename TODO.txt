@@ -1,0 +1,2 @@
+Base on app guid
+Use API to watch for route changes
