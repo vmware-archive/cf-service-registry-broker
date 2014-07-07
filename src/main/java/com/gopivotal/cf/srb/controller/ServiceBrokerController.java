@@ -111,6 +111,20 @@ public class ServiceBrokerController {
         }
     }
 
+    @RequestMapping(value = "/v2/service_instances/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<String> delete(@PathVariable("id") String id,
+                                         @RequestParam("service_id") String serviceId,
+                                         @RequestParam("plan_id") String planId) {
+        boolean exists = serviceInstanceRepository.exists(id);
+
+        if (exists) {
+            serviceInstanceRepository.delete(id);
+            return new ResponseEntity<>("{}", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("{}", HttpStatus.GONE);
+        }
+    }
+
     private String myUri() {
         ApplicationInstanceInfo applicationInstanceInfo = cloud.getApplicationInstanceInfo();
         List<Object> uris = (List<Object>) applicationInstanceInfo.getProperties().get("uris");

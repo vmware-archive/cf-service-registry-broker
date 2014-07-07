@@ -322,4 +322,36 @@ public class ServiceBrokerControllerTest {
                 .statusCode(410)
                 .assertThat().body(equalTo("{}"));
     }
+
+    @Test
+    public void deleteExisting() {
+        when(serviceInstanceRepository.exists("12345")).thenReturn(true);
+
+        given()
+                .standaloneSetup(serviceBrokerController)
+                .queryParam("service_id", "12345")
+                .queryParam("plan_id", "12345")
+                .when()
+                .delete("/v2/service_instances/12345")
+                .then()
+                .statusCode(200)
+                .assertThat().body(equalTo("{}"));
+
+        verify(serviceInstanceRepository).delete("12345");
+    }
+
+    @Test
+    public void deleteMissing() {
+        when(serviceInstanceRepository.exists("12345")).thenReturn(false);
+
+        given()
+                .standaloneSetup(serviceBrokerController)
+                .queryParam("service_id", "12345")
+                .queryParam("plan_id", "12345")
+                .when()
+                .delete("/v2/service_instances/12345")
+                .then()
+                .statusCode(410)
+                .assertThat().body(equalTo("{}"));
+    }
 }
