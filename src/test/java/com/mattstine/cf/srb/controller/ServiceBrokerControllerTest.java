@@ -181,13 +181,13 @@ public class ServiceBrokerControllerTest {
 
     @Test
     public void createBinding() {
+        when(serviceInstanceRepository.exists("12345")).thenReturn(true);
+        when(serviceBindingRepository.exists("12345")).thenReturn(false);
+
         ServiceBinding requestBody = new ServiceBinding();
         requestBody.setServiceId("12345");
         requestBody.setPlanId("12345");
         requestBody.setAppGuid("12345");
-
-        when(serviceInstanceRepository.exists("12345")).thenReturn(true);
-        when(serviceBindingRepository.exists("12345")).thenReturn(false);
 
         given()
                 .standaloneSetup(serviceBrokerController)
@@ -201,10 +201,10 @@ public class ServiceBrokerControllerTest {
                 .body("credentials.username", equalTo("warreng"))
                 .body("credentials.password", equalTo("natedogg"));
 
-        Credentials credentials = new Credentials();
-        credentials.setUri("http://my.uri.com/HaaSh/12345");
-        credentials.setUsername("warreng");
-        credentials.setPassword("natedogg");
+        Credentials newCredentials = new Credentials();
+        newCredentials.setUri("http://my.uri.com/HaaSh/12345");
+        newCredentials.setUsername("warreng");
+        newCredentials.setPassword("natedogg");
 
         ServiceBinding newServiceBinding = new ServiceBinding();
         newServiceBinding.setId("12345");
@@ -212,8 +212,82 @@ public class ServiceBrokerControllerTest {
         newServiceBinding.setServiceId("12345");
         newServiceBinding.setPlanId("12345");
         newServiceBinding.setAppGuid("12345");
-        newServiceBinding.setCredentials(credentials);
+        newServiceBinding.setCredentials(newCredentials);
 
         verify(serviceBindingRepository).save(newServiceBinding);
+    }
+
+    @Test
+    public void createBindingWithConflict() {
+        ServiceBinding existingServiceBinding = new ServiceBinding();
+        existingServiceBinding.setId("12345");
+        existingServiceBinding.setInstanceId("12345");
+        existingServiceBinding.setServiceId("12345");
+        existingServiceBinding.setPlanId("12345");
+        existingServiceBinding.setAppGuid("something different");
+
+        Credentials existingCredentials = new Credentials();
+        existingCredentials.setId("12345");
+        existingCredentials.setUri("http://my.uri.com/HaaSh/12345");
+        existingCredentials.setUsername("warreng");
+        existingCredentials.setPassword("natedogg");
+        existingServiceBinding.setCredentials(existingCredentials);
+
+        when(serviceInstanceRepository.exists("12345")).thenReturn(true);
+        when(serviceBindingRepository.exists("12345")).thenReturn(true);
+        when(serviceBindingRepository.findOne("12345")).thenReturn(existingServiceBinding);
+
+        ServiceBinding requestBody = new ServiceBinding();
+        requestBody.setServiceId("12345");
+        requestBody.setPlanId("12345");
+        requestBody.setAppGuid("12345");
+
+        given()
+                .standaloneSetup(serviceBrokerController)
+                .contentType(ContentType.JSON)
+                .body(requestBody)
+                .when()
+                .put("/v2/service_instances/12345/service_bindings/12345")
+                .then()
+                .statusCode(409)
+                .assertThat().body(equalTo("{}"));
+    }
+
+    @Test
+    public void createBindingWithCopy() {
+        ServiceBinding existingServiceBinding = new ServiceBinding();
+        existingServiceBinding.setId("12345");
+        existingServiceBinding.setInstanceId("12345");
+        existingServiceBinding.setServiceId("12345");
+        existingServiceBinding.setPlanId("12345");
+        existingServiceBinding.setAppGuid("12345");
+
+        Credentials existingCredentials = new Credentials();
+        existingCredentials.setId("12345");
+        existingCredentials.setUri("http://my.uri.com/HaaSh/12345");
+        existingCredentials.setUsername("warreng");
+        existingCredentials.setPassword("natedogg");
+        existingServiceBinding.setCredentials(existingCredentials);
+
+        when(serviceInstanceRepository.exists("12345")).thenReturn(true);
+        when(serviceBindingRepository.exists("12345")).thenReturn(true);
+        when(serviceBindingRepository.findOne("12345")).thenReturn(existingServiceBinding);
+
+        ServiceBinding requestBody = new ServiceBinding();
+        requestBody.setServiceId("12345");
+        requestBody.setPlanId("12345");
+        requestBody.setAppGuid("12345");
+
+        given()
+                .standaloneSetup(serviceBrokerController)
+                .contentType(ContentType.JSON)
+                .body(requestBody)
+                .when()
+                .put("/v2/service_instances/12345/service_bindings/12345")
+                .then()
+                .statusCode(200)
+                .assertThat().body("credentials.uri", equalTo("http://my.uri.com/HaaSh/12345"))
+                .body("credentials.username", equalTo("warreng"))
+                .body("credentials.password", equalTo("natedogg"));
     }
 }
