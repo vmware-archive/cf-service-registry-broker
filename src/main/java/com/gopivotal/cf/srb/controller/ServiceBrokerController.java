@@ -1,12 +1,12 @@
-package com.mattstine.cf.srb.controller;
+package com.gopivotal.cf.srb.controller;
 
-import com.mattstine.cf.srb.model.Credentials;
-import com.mattstine.cf.srb.model.Service;
-import com.mattstine.cf.srb.model.ServiceBinding;
-import com.mattstine.cf.srb.model.ServiceInstance;
-import com.mattstine.cf.srb.repository.ServiceBindingRepository;
-import com.mattstine.cf.srb.repository.ServiceInstanceRepository;
-import com.mattstine.cf.srb.repository.ServiceRepository;
+import com.gopivotal.cf.srb.model.Credentials;
+import com.gopivotal.cf.srb.model.Service;
+import com.gopivotal.cf.srb.model.ServiceBinding;
+import com.gopivotal.cf.srb.model.ServiceInstance;
+import com.gopivotal.cf.srb.repository.ServiceBindingRepository;
+import com.gopivotal.cf.srb.repository.ServiceInstanceRepository;
+import com.gopivotal.cf.srb.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.Cloud;
 import org.springframework.cloud.app.ApplicationInstanceInfo;

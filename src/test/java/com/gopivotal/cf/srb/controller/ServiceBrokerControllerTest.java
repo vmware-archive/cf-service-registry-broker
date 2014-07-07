@@ -1,10 +1,10 @@
-package com.mattstine.cf.srb.controller;
+package com.gopivotal.cf.srb.controller;
 
 import com.jayway.restassured.http.ContentType;
-import com.mattstine.cf.srb.model.*;
-import com.mattstine.cf.srb.repository.ServiceBindingRepository;
-import com.mattstine.cf.srb.repository.ServiceInstanceRepository;
-import com.mattstine.cf.srb.repository.ServiceRepository;
+import com.gopivotal.cf.srb.model.*;
+import com.gopivotal.cf.srb.repository.ServiceBindingRepository;
+import com.gopivotal.cf.srb.repository.ServiceInstanceRepository;
+import com.gopivotal.cf.srb.repository.ServiceRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.cloud.Cloud;

@@ -1,4 +1,4 @@
-package com.mattstine.cf.srb.model;
+package com.gopivotal.cf.srb.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

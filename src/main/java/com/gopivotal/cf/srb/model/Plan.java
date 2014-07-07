@@ -1,7 +1,6 @@
-package com.mattstine.cf.srb.model;
+package com.gopivotal.cf.srb.model;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Entity
 @Table(name = "plans")

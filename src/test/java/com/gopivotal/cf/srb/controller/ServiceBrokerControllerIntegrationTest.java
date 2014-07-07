@@ -1,6 +1,6 @@
-package com.mattstine.cf.srb.controller;
+package com.gopivotal.cf.srb.controller;
 
-import com.mattstine.cf.srb.Application;
+import com.gopivotal.cf.srb.Application;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.IntegrationTest;

@@ -1,6 +1,6 @@
-package com.mattstine.cf.srb.repository;
+package com.gopivotal.cf.srb.repository;
 
-import com.mattstine.cf.srb.model.ServiceInstance;
+import com.gopivotal.cf.srb.model.ServiceInstance;
 
 public class StubServiceInstanceRepository implements ServiceInstanceRepository {
     @Override

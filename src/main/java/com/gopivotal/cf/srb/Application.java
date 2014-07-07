@@ -1,4 +1,4 @@
-package com.mattstine.cf.srb;
+package com.gopivotal.cf.srb;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
