@@ -5,9 +5,6 @@ import com.mattstine.cf.srb.model.Service;
 
 import java.util.Arrays;
 
-/**
- * Created by pivotal on 7/7/14.
- */
 public class StubServiceRepository implements ServiceRepository {
     @Override
     public <S extends Service> S save(S entity) {
