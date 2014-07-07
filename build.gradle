@@ -38,6 +38,10 @@ dependencies {
     versionManagement 'io.spring.platform:platform-versions:1.0.0.RELEASE@properties'
 }
 
+test {
+    environment "VCAP_APPLICATION", "{\"instance_id\":\"5b42b341184b449480e5b1e06340f464\",\"instance_index\":0,\"host\":\"0.0.0.0\",\"port\":61425,\"started_at\":\"2014-04-02 16:34:58 +0000\",\"started_at_timestamp\":1396456498,\"start\":\"2014-04-02 16:34:58 +0000\",\"state_timestamp\":1396456498,\"limits\":{\"mem\":512,\"disk\":1024,\"fds\":16384},\"application_version\":\"412ef5d2-5027-4c7e-a800-56d29907881f\",\"application_name\":\"cf-srb\",\"application_uris\":[\"cf-srb.somecf.com\"],\"version\":\"412ef5d2-5027-4c7e-a800-56d29907881f\",\"name\":\"cf-srb\",\"uris\":[\"cf-srb.somecf.com\"],\"users\":null}"
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '1.12'
 }
