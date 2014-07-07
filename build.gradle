@@ -30,6 +30,7 @@ dependencies {
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile("com.jayway.restassured:rest-assured:2.3.2")
     testCompile("com.jayway.restassured:spring-mock-mvc:2.3.2")
+    testCompile("org.mockito:mockito-core")
     runtime("org.hsqldb:hsqldb")
 
     versionManagement 'io.spring.platform:platform-versions:1.0.0.RELEASE@properties'
