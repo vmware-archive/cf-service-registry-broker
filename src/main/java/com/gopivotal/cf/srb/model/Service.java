@@ -24,6 +24,9 @@ public class Service {
     @JoinColumn(name = "service_id")
     private Set<Plan> plans = new HashSet<>();
 
+    @Embedded
+    private ServiceMetadata metadata;
+
     public String getId() {
         return id;
     }
@@ -66,5 +69,13 @@ public class Service {
 
     public void addPlan(Plan plan) {
         this.plans.add(plan);
+    }
+
+    public ServiceMetadata getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(ServiceMetadata metadata) {
+        this.metadata = metadata;
     }
 }

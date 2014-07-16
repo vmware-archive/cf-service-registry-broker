@@ -15,6 +15,12 @@ public class Plan {
     @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
+    private boolean free;
+
+    @Embedded
+    private PlanMetadata metadata;
+
     public String getId() {
         return id;
     }
@@ -37,5 +43,21 @@ public class Plan {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isFree() {
+        return free;
+    }
+
+    public void setFree(boolean free) {
+        this.free = free;
+    }
+
+    public PlanMetadata getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(PlanMetadata metadata) {
+        this.metadata = metadata;
     }
 }
