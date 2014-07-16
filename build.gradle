@@ -29,6 +29,8 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-security")
+    compile("org.cloudfoundry:cloudfoundry-client-lib:1.0.4.BUILD-SNAPSHOT")
+
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile("com.jayway.restassured:rest-assured:2.3.2")
     testCompile("com.jayway.restassured:spring-mock-mvc:2.3.2")
