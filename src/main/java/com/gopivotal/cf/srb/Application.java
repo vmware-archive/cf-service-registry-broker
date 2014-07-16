@@ -16,7 +16,9 @@ import org.springframework.cloud.app.ApplicationInstanceInfo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -29,6 +31,7 @@ import java.util.List;
 @EnableAutoConfiguration
 @EnableJpaRepositories
 @EnableScheduling
+@Import(CustomizedRestMvcConfiguration.class)
 public class Application {
 
     Log log = LogFactory.getLog(Application.class);
