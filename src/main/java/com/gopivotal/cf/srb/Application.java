@@ -92,6 +92,7 @@ public class Application {
             log.info("Updating Service Plan Visibilities...");
             this.cfOps.updateServicePlanVisibilityForBroker(serviceBroker.getName(), true);
             registered = true;
+            log.info("Service Broker Registration Complete!");
         }
     }
 
