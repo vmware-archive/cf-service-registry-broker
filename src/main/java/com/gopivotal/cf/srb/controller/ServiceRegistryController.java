@@ -4,14 +4,10 @@ import com.gopivotal.cf.srb.model.*;
 import com.gopivotal.cf.srb.repository.RegisteredServiceRepository;
 import com.gopivotal.cf.srb.repository.ServiceRepository;
 import com.gopivotal.cf.srb.service.ServiceBrokerRegistrationService;
-import org.cloudfoundry.client.lib.CloudFoundryOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -77,5 +73,18 @@ public class ServiceRegistryController {
         responseBody.put("id", registeredService.getId());
 
         return new ResponseEntity<Object>(responseBody, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/registry/{id}",
+            method = RequestMethod.DELETE)
+    public ResponseEntity<String> unregister(@PathVariable("id") String id) {
+        RegisteredService registeredService = registeredServiceRepository.findOne(id);
+        Service service = serviceRepository.findByName(registeredService.getName());
+
+        serviceRepository.delete(service.getId());
+        registeredServiceRepository.delete(id);
+        serviceBrokerRegistrationService.registerSelfIdempotent();
+
+        return new ResponseEntity<>("{}", HttpStatus.OK);
     }
 }
