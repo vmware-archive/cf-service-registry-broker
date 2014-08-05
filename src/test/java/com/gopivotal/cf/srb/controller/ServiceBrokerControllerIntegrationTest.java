@@ -1,6 +1,7 @@
 package com.gopivotal.cf.srb.controller;
 
 import com.gopivotal.cf.srb.Application;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.IntegrationTest;
@@ -20,6 +21,7 @@ import static org.hamcrest.CoreMatchers.hasItems;
 public class ServiceBrokerControllerIntegrationTest {
 
     @Test
+    @Ignore
     public void catalogTest() {
         given()
                 .when()
