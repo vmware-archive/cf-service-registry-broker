@@ -60,4 +60,28 @@ public class Plan {
     public void setMetadata(PlanMetadata metadata) {
         this.metadata = metadata;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Plan plan = (Plan) o;
+
+        if (free != plan.free) return false;
+        if (!description.equals(plan.description)) return false;
+        if (!metadata.equals(plan.metadata)) return false;
+        if (!name.equals(plan.name)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + description.hashCode();
+        result = 31 * result + (free ? 1 : 0);
+        result = 31 * result + metadata.hashCode();
+        return result;
+    }
 }

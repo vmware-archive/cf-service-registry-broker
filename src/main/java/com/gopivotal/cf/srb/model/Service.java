@@ -78,4 +78,30 @@ public class Service {
     public void setMetadata(ServiceMetadata metadata) {
         this.metadata = metadata;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Service service = (Service) o;
+
+        if (bindable != service.bindable) return false;
+        if (!description.equals(service.description)) return false;
+        if (!metadata.equals(service.metadata)) return false;
+        if (!name.equals(service.name)) return false;
+        if (!plans.equals(service.plans)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + description.hashCode();
+        result = 31 * result + (bindable ? 1 : 0);
+        result = 31 * result + plans.hashCode();
+        result = 31 * result + metadata.hashCode();
+        return result;
+    }
 }

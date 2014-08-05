@@ -126,4 +126,38 @@ public class RegisteredService {
     public void setBasicAuthPassword(String basicAuthPassword) {
         this.basicAuthPassword = basicAuthPassword;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RegisteredService that = (RegisteredService) o;
+
+        if (!basicAuthPassword.equals(that.basicAuthPassword)) return false;
+        if (!basicAuthUser.equals(that.basicAuthUser)) return false;
+        if (!description.equals(that.description)) return false;
+        if (!displayName.equals(that.displayName)) return false;
+        if (!features.equals(that.features)) return false;
+        if (!longDescription.equals(that.longDescription)) return false;
+        if (!name.equals(that.name)) return false;
+        if (!provider.equals(that.provider)) return false;
+        if (!url.equals(that.url)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + displayName.hashCode();
+        result = 31 * result + description.hashCode();
+        result = 31 * result + longDescription.hashCode();
+        result = 31 * result + provider.hashCode();
+        result = 31 * result + features.hashCode();
+        result = 31 * result + url.hashCode();
+        result = 31 * result + basicAuthUser.hashCode();
+        result = 31 * result + basicAuthPassword.hashCode();
+        return result;
+    }
 }

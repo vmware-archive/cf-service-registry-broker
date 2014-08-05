@@ -33,4 +33,28 @@ public class PlanMetadata {
     public void setCosts(Set<PlanMetadataCost> costs) {
         this.costs = costs;
     }
+
+    public void addCost(PlanMetadataCost cost) {
+        this.costs.add(cost);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PlanMetadata that = (PlanMetadata) o;
+
+        if (!bullets.equals(that.bullets)) return false;
+        if (!costs.equals(that.costs)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = bullets.hashCode();
+        result = 31 * result + costs.hashCode();
+        return result;
+    }
 }

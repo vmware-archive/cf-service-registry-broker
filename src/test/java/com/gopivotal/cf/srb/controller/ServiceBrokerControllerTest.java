@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.springframework.cloud.Cloud;
 import org.springframework.cloud.app.ApplicationInstanceInfo;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -56,10 +57,24 @@ public class ServiceBrokerControllerTest {
         service.setBindable(true);
         service.setDescription("HashMap as a Service");
 
+        PlanMetadataCostAmount amount = new PlanMetadataCostAmount();
+        amount.setUsd(BigDecimal.ZERO);
+
+        PlanMetadataCost cost = new PlanMetadataCost();
+        cost.setAmount(amount);
+        cost.setUnit("USD");
+
+        PlanMetadata planMetadata = new PlanMetadata();
+        planMetadata.addCost(cost);
+        planMetadata.setBullets(Arrays.asList("Feature 1", "Feature 2", "Feature 3"));
+
         Plan plan = new Plan();
         plan.setId("123-456-789");
         plan.setName("Basic");
         plan.setDescription("Basic Plan");
+        plan.setMetadata(planMetadata);
+
+
         service.addPlan(plan);
 
         List services = Arrays.asList(service);
