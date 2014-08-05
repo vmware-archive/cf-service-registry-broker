@@ -20,7 +20,7 @@ public class Service {
     @Column(nullable = false)
     private boolean bindable;
 
-    @OneToMany(orphanRemoval = true)
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "service_id")
     private Set<Plan> plans = new HashSet<>();
 

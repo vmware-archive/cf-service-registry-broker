@@ -3,6 +3,7 @@ package com.gopivotal.cf.srb.controller;
 import com.gopivotal.cf.srb.model.*;
 import com.gopivotal.cf.srb.repository.RegisteredServiceRepository;
 import com.gopivotal.cf.srb.repository.ServiceRepository;
+import com.gopivotal.cf.srb.service.ServiceBrokerRegistrationService;
 import com.jayway.restassured.http.ContentType;
 import org.cloudfoundry.client.lib.CloudFoundryOperations;
 import org.junit.Before;
@@ -25,17 +26,17 @@ public class ServiceRegistryControllerTest {
     private RegisteredServiceRepository registeredServiceRepository;
     private ServiceRegistryController serviceRegistryController;
     private ServiceRepository serviceRepository;
-    private CloudFoundryOperations cfOps;
+    private ServiceBrokerRegistrationService serviceBrokerRegistationService;
 
     @Before
     public void setUp() {
         registeredServiceRepository = mock(RegisteredServiceRepository.class);
         serviceRepository = mock(ServiceRepository.class);
-        cfOps = mock(CloudFoundryOperations.class);
+        serviceBrokerRegistationService = mock(ServiceBrokerRegistrationService.class);
 
         serviceRegistryController = new ServiceRegistryController(registeredServiceRepository,
                 serviceRepository,
-                cfOps);
+                serviceBrokerRegistationService);
     }
 
     @Test
@@ -93,5 +94,6 @@ public class ServiceRegistryControllerTest {
 
         verify(registeredServiceRepository).save(requestBody);
         verify(serviceRepository).save(service);
+        verify(serviceBrokerRegistationService).registerSelfIdempotent();
     }
 }
