@@ -43,7 +43,7 @@ public class ServiceRegistryController {
 
         PlanMetadataCost cost = new PlanMetadataCost();
         cost.setAmount(amount);
-        cost.setUnit("USD");
+        cost.setUnit("MONTH");
 
         PlanMetadata planMetadata = new PlanMetadata();
         planMetadata.addCost(cost);
