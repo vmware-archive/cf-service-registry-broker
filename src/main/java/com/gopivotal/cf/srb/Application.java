@@ -31,7 +31,6 @@ import java.util.List;
 @EnableAutoConfiguration
 @EnableJpaRepositories
 @EnableScheduling
-@Import(CustomizedRestMvcConfiguration.class)
 public class Application {
 
     Log log = LogFactory.getLog(Application.class);

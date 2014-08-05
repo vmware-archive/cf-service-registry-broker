@@ -87,7 +87,7 @@ public class ServiceBrokerController {
         } else {
             Credentials credentials = new Credentials();
             credentials.setId(UUID.randomUUID().toString());
-            credentials.setUri("http://" + myUri() + "/HaaSh/" + instanceId);
+            credentials.setUri("http://" + myUri() + "/registry/" + instanceId);
             credentials.setUsername("warreng");
             credentials.setPassword("natedogg");
             serviceBinding.setCredentials(credentials);

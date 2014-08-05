@@ -197,7 +197,7 @@ public class ServiceBrokerControllerTest {
                 .put("/v2/service_instances/12345/service_bindings/12345")
                 .then()
                 .statusCode(201)
-                .assertThat().body("credentials.uri", equalTo("http://my.uri.com/HaaSh/12345"))
+                .assertThat().body("credentials.uri", equalTo("http://my.uri.com/registry/12345"))
                 .body("credentials.username", equalTo("warreng"))
                 .body("credentials.password", equalTo("natedogg"));
 
