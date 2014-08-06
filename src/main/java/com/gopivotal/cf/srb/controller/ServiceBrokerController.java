@@ -29,7 +29,6 @@ public class ServiceBrokerController {
     public ServiceBrokerController(ServiceRepository serviceRepository,
                                    ServiceInstanceRepository serviceInstanceRepository,
                                    ServiceBindingRepository serviceBindingRepository, RegisteredServiceRepository registeredServiceRepository) {
-//        this.cloud = cloud;
         this.serviceRepository = serviceRepository;
         this.serviceInstanceRepository = serviceInstanceRepository;
         this.serviceBindingRepository = serviceBindingRepository;
