@@ -35,6 +35,19 @@ public class ServiceRegistryController {
         registeredService.setId(UUID.randomUUID().toString());
         registeredServiceRepository.save(registeredService);
 
+        ServiceMetadata serviceMetadata = new ServiceMetadata();
+        serviceMetadata.setDisplayName(registeredService.getDisplayName());
+        serviceMetadata.setLongDescription(registeredService.getLongDescription());
+        serviceMetadata.setProviderDisplayName(registeredService.getProvider());
+        serviceMetadata.setImageUrl(Application.IMAGE_URL_FOR_SERVICE_REGISTRY);
+
+        Service service = new Service();
+        service.setId(UUID.randomUUID().toString());
+        service.setDescription(registeredService.getDescription());
+        service.setName(registeredService.getName());
+        service.setBindable(true);
+        service.setMetadata(serviceMetadata);
+
         PlanMetadataCostAmount amount = new PlanMetadataCostAmount();
         amount.setUsd(BigDecimal.ZERO);
 
@@ -53,18 +66,6 @@ public class ServiceRegistryController {
         plan.setFree(true);
         plan.setMetadata(planMetadata);
 
-        ServiceMetadata serviceMetadata = new ServiceMetadata();
-        serviceMetadata.setDisplayName(registeredService.getDisplayName());
-        serviceMetadata.setLongDescription(registeredService.getLongDescription());
-        serviceMetadata.setProviderDisplayName(registeredService.getProvider());
-        serviceMetadata.setImageUrl(Application.IMAGE_URL_FOR_SERVICE_REGISTRY);
-
-        Service service = new Service();
-        service.setId(UUID.randomUUID().toString());
-        service.setDescription(registeredService.getDescription());
-        service.setName(registeredService.getName());
-        service.setBindable(true);
-        service.setMetadata(serviceMetadata);
         service.addPlan(plan);
 
         serviceRepository.save(service);

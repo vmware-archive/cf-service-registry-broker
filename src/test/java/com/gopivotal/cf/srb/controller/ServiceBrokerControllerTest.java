@@ -1,6 +1,5 @@
 package com.gopivotal.cf.srb.controller;
 
-import com.gopivotal.cf.srb.Application;
 import com.gopivotal.cf.srb.model.*;
 import com.gopivotal.cf.srb.repository.RegisteredServiceRepository;
 import com.gopivotal.cf.srb.repository.ServiceBindingRepository;
@@ -10,10 +9,10 @@ import com.jayway.restassured.http.ContentType;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.gopivotal.cf.srb.controller.TestDataUtil.*;
 import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -21,28 +20,6 @@ import static org.mockito.Mockito.*;
 
 public class ServiceBrokerControllerTest {
 
-    private static final String UNIVERSAL_DUMMY_ID = "12345";
-
-    private static final String REGISTERED_SERVICE_URL = "http://my.url.com";
-    private static final String REGISTERED_SERVICE_USER = "tupac";
-    private static final String REGISTERED_SERVICE_PASSWORD = "makaveli";
-
-    public static final int STATUS_200_OK = 200;
-    public static final int STATUS_201_CREATED = 201;
-    public static final int STATUS_409_CONFLICT = 409;
-    public static final int STATUS_410_GONE = 410;
-
-    private static final String EMPTY_RESPONSE_BODY = "{}";
-
-    private static final String DUMMY_SERVICE_DISPLAY_NAME = "A Web Service";
-    private static final String DUMMY_SERVICE_LONG_DESCRIPTION = "A wicked cool web service that will provide you with unicorns and rainbows.";
-    private static final String DUMMY_SERVICE_PROVIDER = "My Awesome Startup";
-    private static final String DUMMY_SERVICE_NAME = "a-web-service";
-    private static final String DUMMY_SERVICE_DESCRIPTION = "A wicked cool web service!";
-    private static final String DUMMY_SERVICE_PLAN_NAME = "Basic";
-    private static final String DUMMY_SERVICE_PLAN_DESCRIPTION = "Basic Plan";
-    private static final List<String> DUMMY_SERVICE_PLAN_METADATA_BULLETS = Arrays.asList("Feature 1", "Feature 2", "Feature 3");
-    private static final String DUMMY_SERVICE_PLAN_METADATA_COST_UNIT = "MONTH";
     public static final String SERVICE_METADATA_CONFLICT = "something different";
 
     private ServiceBrokerController mockServiceBrokerController;
@@ -55,7 +32,7 @@ public class ServiceBrokerControllerTest {
 
     @Before
     public void setUp() {
-        prepareMockServiceData();
+        dummyService = prepareMockServiceData();
         prepareMockServiceRepository();
 
         mockServiceInstanceRepository = mock(ServiceInstanceRepository.class);
@@ -69,54 +46,21 @@ public class ServiceBrokerControllerTest {
                 mockRegisteredServiceRepository);
     }
 
-    private void prepareMockServiceData() {
-        ServiceMetadata serviceMetadata = new ServiceMetadata();
-        serviceMetadata.setDisplayName(DUMMY_SERVICE_DISPLAY_NAME);
-        serviceMetadata.setLongDescription(DUMMY_SERVICE_LONG_DESCRIPTION);
-        serviceMetadata.setProviderDisplayName(DUMMY_SERVICE_PROVIDER);
-        serviceMetadata.setImageUrl(Application.IMAGE_URL_FOR_SERVICE_REGISTRY);
-
-        dummyService = new Service();
-        dummyService.setId(UNIVERSAL_DUMMY_ID);
-        dummyService.setName(DUMMY_SERVICE_NAME);
-        dummyService.setBindable(true);
-        dummyService.setDescription(DUMMY_SERVICE_DESCRIPTION);
-        dummyService.setMetadata(serviceMetadata);
-
-        PlanMetadataCostAmount amount = new PlanMetadataCostAmount();
-        amount.setUsd(BigDecimal.ZERO);
-
-        PlanMetadataCost cost = new PlanMetadataCost();
-        cost.setAmount(amount);
-        cost.setUnit(DUMMY_SERVICE_PLAN_METADATA_COST_UNIT);
-
-        PlanMetadata planMetadata = new PlanMetadata();
-        planMetadata.addCost(cost);
-        planMetadata.setBullets(DUMMY_SERVICE_PLAN_METADATA_BULLETS);
-
-        Plan plan = new Plan();
-        plan.setId(UNIVERSAL_DUMMY_ID);
-        plan.setName(DUMMY_SERVICE_PLAN_NAME);
-        plan.setDescription(DUMMY_SERVICE_PLAN_DESCRIPTION);
-        plan.setMetadata(planMetadata);
-
-        dummyService.addPlan(plan);
-    }
-
     private void prepareMockServiceRepository() {
-        List services = Arrays.asList(dummyService);
+        List<Service> services = Arrays.asList(dummyService);
         mockServiceRepository = mock(ServiceRepository.class);
         when(mockServiceRepository.findAll()).thenReturn(services);
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void catalogTest() {
         given()
                 .standaloneSetup(mockServiceBrokerController)
                 .when()
                 .get("/v2/catalog").
                 then()
-                .statusCode(200)
+                .statusCode(STATUS_200_OK)
                 .body("services.id", hasItems(UNIVERSAL_DUMMY_ID))
                 .body("services.name", hasItems(DUMMY_SERVICE_NAME))
                 .body("services.description", hasItems(DUMMY_SERVICE_DESCRIPTION))
@@ -208,16 +152,7 @@ public class ServiceBrokerControllerTest {
 
     @Test
     public void createBinding() {
-        RegisteredService registeredService = new RegisteredService();
-        registeredService.setName(DUMMY_SERVICE_NAME);
-        registeredService.setDescription(DUMMY_SERVICE_PLAN_DESCRIPTION);
-        registeredService.setLongDescription(DUMMY_SERVICE_LONG_DESCRIPTION);
-        registeredService.setDisplayName(DUMMY_SERVICE_DISPLAY_NAME);
-        registeredService.setProvider(DUMMY_SERVICE_PROVIDER);
-        registeredService.setFeatures(DUMMY_SERVICE_PLAN_METADATA_BULLETS);
-        registeredService.setUrl(REGISTERED_SERVICE_URL);
-        registeredService.setBasicAuthUser(REGISTERED_SERVICE_USER);
-        registeredService.setBasicAuthPassword(REGISTERED_SERVICE_PASSWORD);
+        RegisteredService registeredService = prepareRegisteredService();
 
         when(mockServiceInstanceRepository.exists(UNIVERSAL_DUMMY_ID)).thenReturn(true);
         when(mockServiceBindingRepository.exists(UNIVERSAL_DUMMY_ID)).thenReturn(false);
@@ -258,6 +193,7 @@ public class ServiceBrokerControllerTest {
 
         verify(mockServiceBindingRepository).save(newServiceBinding);
     }
+
 
     @Test
     public void createBindingWithConflict() {

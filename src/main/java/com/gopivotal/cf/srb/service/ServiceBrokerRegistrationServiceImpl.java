@@ -66,6 +66,7 @@ public class ServiceBrokerRegistrationServiceImpl implements ServiceBrokerRegist
         return serviceBroker;
     }
 
+    @SuppressWarnings("unchecked")
     private String firstRoute() {
         ApplicationInstanceInfo applicationInstanceInfo = cloud.getApplicationInstanceInfo();
         List<Object> routes = (List<Object>) applicationInstanceInfo.getProperties().get("application_uris");

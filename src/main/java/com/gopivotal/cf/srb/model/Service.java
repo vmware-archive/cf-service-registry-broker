@@ -104,4 +104,16 @@ public class Service {
         result = 31 * result + metadata.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Service{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", bindable=" + bindable +
+                ", plans=" + plans +
+                ", metadata=" + metadata +
+                '}';
+    }
 }

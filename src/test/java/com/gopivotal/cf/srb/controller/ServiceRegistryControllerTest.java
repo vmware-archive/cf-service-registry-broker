@@ -1,29 +1,20 @@
 package com.gopivotal.cf.srb.controller;
 
-import com.gopivotal.cf.srb.Application;
-import com.gopivotal.cf.srb.model.*;
+import com.gopivotal.cf.srb.model.RegisteredService;
+import com.gopivotal.cf.srb.model.Service;
 import com.gopivotal.cf.srb.repository.RegisteredServiceRepository;
 import com.gopivotal.cf.srb.repository.ServiceRepository;
 import com.gopivotal.cf.srb.service.ServiceBrokerRegistrationService;
 import com.jayway.restassured.http.ContentType;
-import org.cloudfoundry.client.lib.CloudFoundryOperations;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-
+import static com.gopivotal.cf.srb.controller.TestDataUtil.*;
+import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Mockito.mock;
-import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.given;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-
-/**
- * Created by pivotal on 8/5/14.
- */
 public class ServiceRegistryControllerTest {
 
     private RegisteredServiceRepository registeredServiceRepository;
@@ -31,51 +22,13 @@ public class ServiceRegistryControllerTest {
     private ServiceRepository serviceRepository;
     private ServiceBrokerRegistrationService serviceBrokerRegistationService;
 
-    private Service service;
+    private Service dummyService;
     private RegisteredService registeredService;
 
     @Before
     public void setUp() {
-        PlanMetadataCostAmount amount = new PlanMetadataCostAmount();
-        amount.setUsd(BigDecimal.ZERO);
-
-        PlanMetadataCost cost = new PlanMetadataCost();
-        cost.setAmount(amount);
-        cost.setUnit("MONTH");
-
-        PlanMetadata planMetadata = new PlanMetadata();
-        planMetadata.addCost(cost);
-        planMetadata.setBullets(Arrays.asList("Feature 1", "Feature 2", "Feature 3"));
-
-        Plan plan = new Plan();
-        plan.setName("Standard");
-        plan.setDescription("Standard Plan");
-        plan.setFree(true);
-        plan.setMetadata(planMetadata);
-
-        ServiceMetadata serviceMetadata = new ServiceMetadata();
-        serviceMetadata.setDisplayName("A Web Service");
-        serviceMetadata.setLongDescription("A wicked cool web service that will provide you with unicorns and rainbows.");
-        serviceMetadata.setProviderDisplayName("My Awesome Startup");
-        serviceMetadata.setImageUrl(Application.IMAGE_URL_FOR_SERVICE_REGISTRY);
-
-        service = new Service();
-        service.setDescription("A wicked cool web service!");
-        service.setName("a-web-service");
-        service.setBindable(true);
-        service.setMetadata(serviceMetadata);
-        service.addPlan(plan);
-
-        registeredService = new RegisteredService();
-        registeredService.setName("a-web-service");
-        registeredService.setDescription("A wicked cool web service!");
-        registeredService.setLongDescription("A wicked cool web service that will provide you with unicorns and rainbows.");
-        registeredService.setDisplayName("A Web Service");
-        registeredService.setProvider("My Awesome Startup");
-        registeredService.setFeatures(Arrays.asList("Feature 1", "Feature 2", "Feature 3"));
-        registeredService.setUrl("http://my.url.com");
-        registeredService.setBasicAuthUser("tupac");
-        registeredService.setBasicAuthPassword("makaveli");
+        dummyService = prepareMockServiceData();
+        registeredService = prepareRegisteredService();
 
         registeredServiceRepository = mock(RegisteredServiceRepository.class);
         serviceRepository = mock(ServiceRepository.class);
@@ -88,36 +41,36 @@ public class ServiceRegistryControllerTest {
 
     @Test
     public void testRegister() {
-         given()
-                 .standaloneSetup(serviceRegistryController)
-                 .contentType(ContentType.JSON)
-                 .body(registeredService)
-                 .when()
-                 .post("/registry")
-                 .then()
-                 .statusCode(201)
-                 .body("id", anything());
+        given()
+                .standaloneSetup(serviceRegistryController)
+                .contentType(ContentType.JSON)
+                .body(registeredService)
+                .when()
+                .post("/registry")
+                .then()
+                .statusCode(STATUS_201_CREATED)
+                .body("id", anything());
 
         verify(registeredServiceRepository).save(registeredService);
-        verify(serviceRepository).save(service);
+        verify(serviceRepository).save(dummyService);
         verify(serviceBrokerRegistationService).registerSelfIdempotent();
     }
 
     @Test
     public void testUnregister() {
-        service.setId("ABCDEF");
-        when(registeredServiceRepository.findOne("12345")).thenReturn(registeredService);
-        when(serviceRepository.findByName("a-web-service")).thenReturn(service);
+        dummyService.setId("ABCDEF");
+        when(registeredServiceRepository.findOne(UNIVERSAL_DUMMY_ID)).thenReturn(registeredService);
+        when(serviceRepository.findByName(DUMMY_SERVICE_NAME)).thenReturn(dummyService);
 
         given()
                 .standaloneSetup(serviceRegistryController)
                 .when()
-                .delete("/registry/12345")
+                .delete("/registry/{registered_service_id}", UNIVERSAL_DUMMY_ID)
                 .then()
-                .statusCode(200)
-                .assertThat().body(equalTo("{}"));
+                .statusCode(STATUS_200_OK)
+                .assertThat().body(equalTo(EMPTY_RESPONSE_BODY));
 
-        verify(registeredServiceRepository).delete("12345");
+        verify(registeredServiceRepository).delete(UNIVERSAL_DUMMY_ID);
         verify(serviceRepository).delete("ABCDEF");
         verify(serviceBrokerRegistationService).registerSelfIdempotent();
     }

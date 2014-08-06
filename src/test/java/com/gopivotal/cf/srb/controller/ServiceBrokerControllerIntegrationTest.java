@@ -22,6 +22,7 @@ public class ServiceBrokerControllerIntegrationTest {
 
     @Test
     @Ignore
+    @SuppressWarnings("unchecked")
     public void catalogTest() {
         given()
                 .when()
