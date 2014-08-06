@@ -5,15 +5,12 @@ import org.apache.commons.logging.LogFactory;
 import org.cloudfoundry.client.lib.CloudFoundryOperations;
 import org.cloudfoundry.client.lib.domain.CloudEntity;
 import org.cloudfoundry.client.lib.domain.CloudServiceBroker;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.Cloud;
 import org.springframework.cloud.app.ApplicationInstanceInfo;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
 public class ServiceBrokerRegistrationServiceImpl implements ServiceBrokerRegistrationService {
 
     @Value("${security.user.name}")
@@ -27,7 +24,6 @@ public class ServiceBrokerRegistrationServiceImpl implements ServiceBrokerRegist
     private final Cloud cloud;
     private final CloudFoundryOperations cloudFoundryOperations;
 
-    @Autowired
     public ServiceBrokerRegistrationServiceImpl(Cloud cloud, CloudFoundryOperations cloudFoundryOperations) {
         this.cloud = cloud;
         this.cloudFoundryOperations = cloudFoundryOperations;
