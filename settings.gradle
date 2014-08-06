@@ -1,0 +1,1 @@
+include "service-registry-broker", "service-registry-client"
