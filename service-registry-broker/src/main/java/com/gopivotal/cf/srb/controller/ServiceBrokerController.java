@@ -5,6 +5,7 @@ import com.gopivotal.cf.srb.repository.RegisteredServiceRepository;
 import com.gopivotal.cf.srb.repository.ServiceBindingRepository;
 import com.gopivotal.cf.srb.repository.ServiceInstanceRepository;
 import com.gopivotal.cf.srb.repository.ServiceRepository;
+import com.gopivotal.cf.srb.service.ServiceBrokerRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.Cloud;
 import org.springframework.cloud.app.ApplicationInstanceInfo;
@@ -24,15 +25,19 @@ public class ServiceBrokerController {
     private final ServiceInstanceRepository serviceInstanceRepository;
     private final ServiceBindingRepository serviceBindingRepository;
     private final RegisteredServiceRepository registeredServiceRepository;
+    private final ServiceBrokerRegistrationService serviceBrokerRegistrationService;
 
     @Autowired
     public ServiceBrokerController(ServiceRepository serviceRepository,
                                    ServiceInstanceRepository serviceInstanceRepository,
-                                   ServiceBindingRepository serviceBindingRepository, RegisteredServiceRepository registeredServiceRepository) {
+                                   ServiceBindingRepository serviceBindingRepository,
+                                   RegisteredServiceRepository registeredServiceRepository,
+                                   ServiceBrokerRegistrationService serviceBrokerRegistrationService) {
         this.serviceRepository = serviceRepository;
         this.serviceInstanceRepository = serviceInstanceRepository;
         this.serviceBindingRepository = serviceBindingRepository;
         this.registeredServiceRepository = registeredServiceRepository;
+        this.serviceBrokerRegistrationService = serviceBrokerRegistrationService;
     }
 
     @RequestMapping("/v2/catalog")
@@ -83,7 +88,15 @@ public class ServiceBrokerController {
             }
         } else {
             Service service = serviceRepository.findOne(serviceBinding.getServiceId());
-            RegisteredService registeredService = registeredServiceRepository.findByName(service.getName());
+            RegisteredService registeredService;
+            if ("service-registry".equals(service.getName())) {
+                registeredService = new RegisteredService();
+                registeredService.setUrl("http://" + serviceBrokerRegistrationService.firstRoute() + "/registry");
+                registeredService.setBasicAuthUser("warreng");
+                registeredService.setBasicAuthPassword("natedogg");
+            } else {
+                registeredService = registeredServiceRepository.findByName(service.getName());
+            }
 
             Credentials credentials = new Credentials();
             credentials.setId(UUID.randomUUID().toString());

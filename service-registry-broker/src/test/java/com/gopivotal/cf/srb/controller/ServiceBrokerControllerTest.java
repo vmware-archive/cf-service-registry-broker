@@ -5,6 +5,7 @@ import com.gopivotal.cf.srb.repository.RegisteredServiceRepository;
 import com.gopivotal.cf.srb.repository.ServiceBindingRepository;
 import com.gopivotal.cf.srb.repository.ServiceInstanceRepository;
 import com.gopivotal.cf.srb.repository.ServiceRepository;
+import com.gopivotal.cf.srb.service.ServiceBrokerRegistrationService;
 import com.jayway.restassured.http.ContentType;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +28,7 @@ public class ServiceBrokerControllerTest {
     private ServiceInstanceRepository mockServiceInstanceRepository;
     private ServiceBindingRepository mockServiceBindingRepository;
     private RegisteredServiceRepository mockRegisteredServiceRepository;
+    private ServiceBrokerRegistrationService mockServiceBrokerRegistrationService;
 
     private Service dummyService;
 
@@ -38,12 +40,14 @@ public class ServiceBrokerControllerTest {
         mockServiceInstanceRepository = mock(ServiceInstanceRepository.class);
         mockServiceBindingRepository = mock(ServiceBindingRepository.class);
         mockRegisteredServiceRepository = mock(RegisteredServiceRepository.class);
+        mockServiceBrokerRegistrationService = mock(ServiceBrokerRegistrationService.class);
 
         mockServiceBrokerController = new ServiceBrokerController(
                 mockServiceRepository,
                 mockServiceInstanceRepository,
                 mockServiceBindingRepository,
-                mockRegisteredServiceRepository);
+                mockRegisteredServiceRepository,
+                mockServiceBrokerRegistrationService);
     }
 
     private void prepareMockServiceRepository() {
@@ -194,6 +198,49 @@ public class ServiceBrokerControllerTest {
         verify(mockServiceBindingRepository).save(newServiceBinding);
     }
 
+    @Test
+    public void createBindingForServiceRegistry() {
+        when(mockServiceInstanceRepository.exists(UNIVERSAL_DUMMY_ID)).thenReturn(true);
+        when(mockServiceBindingRepository.exists(UNIVERSAL_DUMMY_ID)).thenReturn(false);
+
+        dummyService.setName("service-registry");
+        when(mockServiceRepository.findOne(UNIVERSAL_DUMMY_ID)).thenReturn(dummyService);
+        when(mockServiceBrokerRegistrationService.firstRoute()).thenReturn("my.url.com");
+
+        ServiceBinding requestBody = new ServiceBinding();
+        requestBody.setServiceId(UNIVERSAL_DUMMY_ID);
+        requestBody.setPlanId(UNIVERSAL_DUMMY_ID);
+        requestBody.setAppGuid(UNIVERSAL_DUMMY_ID);
+
+        given()
+                .standaloneSetup(mockServiceBrokerController)
+                .contentType(ContentType.JSON)
+                .body(requestBody)
+                .when()
+                .put("/v2/service_instances/{service_instance_id}/service_bindings/{service_binding_id}",
+                        UNIVERSAL_DUMMY_ID,
+                        UNIVERSAL_DUMMY_ID)
+                .then()
+                .statusCode(STATUS_201_CREATED)
+                .assertThat().body("credentials.uri", equalTo("http://my.url.com/registry"))
+                .body("credentials.username", equalTo("warreng"))
+                .body("credentials.password", equalTo("natedogg"));
+
+        Credentials newCredentials = new Credentials();
+        newCredentials.setUri(REGISTERED_SERVICE_URL);
+        newCredentials.setUsername(REGISTERED_SERVICE_USER);
+        newCredentials.setPassword(REGISTERED_SERVICE_PASSWORD);
+
+        ServiceBinding newServiceBinding = new ServiceBinding();
+        newServiceBinding.setId(UNIVERSAL_DUMMY_ID);
+        newServiceBinding.setInstanceId(UNIVERSAL_DUMMY_ID);
+        newServiceBinding.setServiceId(UNIVERSAL_DUMMY_ID);
+        newServiceBinding.setPlanId(UNIVERSAL_DUMMY_ID);
+        newServiceBinding.setAppGuid(UNIVERSAL_DUMMY_ID);
+        newServiceBinding.setCredentials(newCredentials);
+
+        verify(mockServiceBindingRepository).save(newServiceBinding);
+    }
 
     @Test
     public void createBindingWithConflict() {

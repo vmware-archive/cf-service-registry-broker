@@ -8,6 +8,7 @@ import org.cloudfoundry.client.lib.domain.CloudServiceBroker;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.Cloud;
 import org.springframework.cloud.app.ApplicationInstanceInfo;
+import org.springframework.context.annotation.Bean;
 
 import java.util.List;
 
@@ -62,8 +63,10 @@ public class ServiceBrokerRegistrationServiceImpl implements ServiceBrokerRegist
         return serviceBroker;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
-    private String firstRoute() {
+    @Bean
+    public String firstRoute() {
         ApplicationInstanceInfo applicationInstanceInfo = cloud.getApplicationInstanceInfo();
         List<Object> routes = (List<Object>) applicationInstanceInfo.getProperties().get("application_uris");
         return (String) routes.get(0);

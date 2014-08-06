@@ -28,6 +28,12 @@ public class LocalConfig {
             public void registerSelfIdempotent() {
                 // Do nothing...stub!
             }
+
+            @Override
+            public String firstRoute() {
+                // Stub!
+                return "my.url.com";
+            }
         };
     }
 }
