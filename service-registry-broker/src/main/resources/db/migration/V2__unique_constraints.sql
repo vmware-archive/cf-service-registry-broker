@@ -1,0 +1,1 @@
+alter table registered_services add unique (name);
