@@ -87,8 +87,6 @@ public class ServiceRegistryControllerTest {
 
     @Test
     public void testRegister() {
-
-
          given()
                  .standaloneSetup(serviceRegistryController)
                  .contentType(ContentType.JSON)

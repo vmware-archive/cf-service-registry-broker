@@ -1,9 +1,7 @@
 package com.gopivotal.cf.srb.controller;
 
-import com.gopivotal.cf.srb.model.Credentials;
-import com.gopivotal.cf.srb.model.Service;
-import com.gopivotal.cf.srb.model.ServiceBinding;
-import com.gopivotal.cf.srb.model.ServiceInstance;
+import com.gopivotal.cf.srb.model.*;
+import com.gopivotal.cf.srb.repository.RegisteredServiceRepository;
 import com.gopivotal.cf.srb.repository.ServiceBindingRepository;
 import com.gopivotal.cf.srb.repository.ServiceInstanceRepository;
 import com.gopivotal.cf.srb.repository.ServiceRepository;
@@ -26,16 +24,18 @@ public class ServiceBrokerController {
     private final ServiceRepository serviceRepository;
     private final ServiceInstanceRepository serviceInstanceRepository;
     private final ServiceBindingRepository serviceBindingRepository;
+    private final RegisteredServiceRepository registeredServiceRepository;
 
     @Autowired
     public ServiceBrokerController(Cloud cloud,
                                    ServiceRepository serviceRepository,
                                    ServiceInstanceRepository serviceInstanceRepository,
-                                   ServiceBindingRepository serviceBindingRepository) {
+                                   ServiceBindingRepository serviceBindingRepository, RegisteredServiceRepository registeredServiceRepository) {
         this.cloud = cloud;
         this.serviceRepository = serviceRepository;
         this.serviceInstanceRepository = serviceInstanceRepository;
         this.serviceBindingRepository = serviceBindingRepository;
+        this.registeredServiceRepository = registeredServiceRepository;
     }
 
     @RequestMapping("/v2/catalog")
@@ -85,11 +85,14 @@ public class ServiceBrokerController {
                 return new ResponseEntity<Object>("{}", HttpStatus.CONFLICT);
             }
         } else {
+            Service service = serviceRepository.findOne(serviceBinding.getServiceId());
+            RegisteredService registeredService = registeredServiceRepository.findByName(service.getName());
+
             Credentials credentials = new Credentials();
             credentials.setId(UUID.randomUUID().toString());
-            credentials.setUri("http://" + myUri() + "/registry/" + instanceId);
-            credentials.setUsername("warreng");
-            credentials.setPassword("natedogg");
+            credentials.setUri(registeredService.getUrl());
+            credentials.setUsername(registeredService.getBasicAuthUser());
+            credentials.setPassword(registeredService.getBasicAuthPassword());
             serviceBinding.setCredentials(credentials);
             serviceBindingRepository.save(serviceBinding);
             return new ResponseEntity<Object>(wrapCredentials(credentials), HttpStatus.CREATED);
