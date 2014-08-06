@@ -16,9 +16,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import javax.sql.DataSource;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -49,6 +51,15 @@ public class Application {
     private String cfSpace;
 
     @Bean
+    public DataSource dataSource() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setUrl("jdbc:mysql://192.168.0.61:3306/cf_2e6816a1_3096_4498_aeb8_3ee16699c04a");
+        dataSource.setUsername("g2ZUhH1ZIcHOErqs");
+        dataSource.setPassword("BFspiETMc0htAH2a");
+        return dataSource;
+    }
+
+    @Bean
     public Cloud cloud() {
         return new CloudFactory().getCloud();
     }
@@ -66,7 +77,7 @@ public class Application {
 
     private boolean registered = false;
 
-    @Scheduled(fixedDelay = 5000)
+//    @Scheduled(fixedDelay = 5000)
     public void init() throws Exception {
         if (!registered) {
             log.info("Starting Service Broker Registration...");
