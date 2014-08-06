@@ -20,18 +20,16 @@ import java.util.UUID;
 @RestController
 public class ServiceBrokerController {
 
-    private final Cloud cloud;
     private final ServiceRepository serviceRepository;
     private final ServiceInstanceRepository serviceInstanceRepository;
     private final ServiceBindingRepository serviceBindingRepository;
     private final RegisteredServiceRepository registeredServiceRepository;
 
     @Autowired
-    public ServiceBrokerController(Cloud cloud,
-                                   ServiceRepository serviceRepository,
+    public ServiceBrokerController(ServiceRepository serviceRepository,
                                    ServiceInstanceRepository serviceInstanceRepository,
                                    ServiceBindingRepository serviceBindingRepository, RegisteredServiceRepository registeredServiceRepository) {
-        this.cloud = cloud;
+//        this.cloud = cloud;
         this.serviceRepository = serviceRepository;
         this.serviceInstanceRepository = serviceInstanceRepository;
         this.serviceBindingRepository = serviceBindingRepository;
@@ -126,12 +124,6 @@ public class ServiceBrokerController {
         } else {
             return new ResponseEntity<>("{}", HttpStatus.GONE);
         }
-    }
-
-    private String myUri() {
-        ApplicationInstanceInfo applicationInstanceInfo = cloud.getApplicationInstanceInfo();
-        List<Object> uris = (List<Object>) applicationInstanceInfo.getProperties().get("uris");
-        return uris.get(0).toString();
     }
 
     private Map<String, Object> wrapCredentials(Credentials credentials) {
