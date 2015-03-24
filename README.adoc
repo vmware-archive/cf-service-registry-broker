@@ -1,6 +1,8 @@
 = Cloud Foundry Service Registry Broker
 Matt Stine <mstine@pivotal.io>
 
+_This is an experimental project not suitable for production use!_
+
 This repository contains two projects:
 
 +service-registry-broker+:: A service broker which acts as a _service registry_ for web services applications deployed to an instance of Cloud Foundry.
